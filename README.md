@@ -58,7 +58,7 @@ Cette approche est plus réaliste, mais plus complexe à réaliser matérielleme
 ---
 
 ## 📄 Rapport
-Le rapport complet du projet est disponible dans le dossier `report/` et contient :
+Le rapport complet du projet est disponible dans le dossier et contient :
 - les schémas,
 - la théorie,
 - les tests,

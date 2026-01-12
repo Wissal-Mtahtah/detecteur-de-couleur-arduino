@@ -1,0 +1,77 @@
+#include <LiquidCrystal.h>
+
+// Déclaration des pins LCD (RS, EN, D4, D5, D6, D7)
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+// Pins pour le capteur de couleur TCS3200
+#define S0 7
+#define S1 6
+#define S2 9
+#define S3 8
+#define OUT 10
+
+// Variables pour les valeurs RGB
+int rValue, gValue, bValue;
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("Initialisation");
+  delay(2000);
+  lcd.clear();
+
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  pinMode(OUT, INPUT);
+
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
+}
+
+void loop() {
+  rValue = readColor(LOW, LOW);     // Rouge
+  gValue = readColor(HIGH, HIGH);   // Vert
+  bValue = readColor(HIGH, LOW);    // Bleu
+
+  int total = rValue + gValue + bValue;
+  int rPercent = (rValue * 100) / total;
+  int gPercent = (gValue * 100) / total;
+  int bPercent = (bValue * 100) / total;
+
+  lcd.setCursor(0, 0);
+  lcd.print("Couleur:");
+  lcd.setCursor(0, 1);
+
+  if (rPercent > 60 && gPercent < 30 && bPercent < 30) {
+    lcd.print("Rouge ");
+  } else if (rPercent > 50 && gPercent > 30 && bPercent < 30) {
+    lcd.print("Orange ");
+  } else if (rPercent > 60 && gPercent > 60 && bPercent < 30) {
+    lcd.print("Jaune ");
+  } else if (rPercent < 30 && gPercent > 60 && bPercent < 30) {
+    lcd.print("Vert ");
+  } else if (rPercent < 30 && gPercent > 30 && bPercent > 60) {
+    lcd.print("Bleu ");
+  } else if (rPercent > 50 && gPercent < 30 && bPercent > 50) {
+    lcd.print("Indigo ");
+  } else if (rPercent > 50 && gPercent < 30 && bPercent > 60) {
+    lcd.print("Violet ");
+  } else if (abs(rPercent - gPercent) < 10 && abs(rPercent - bPercent) < 10 && rPercent > 20 && gPercent > 20 && bPercent > 20) {
+    lcd.print("Gris ");
+  } else if (rPercent < 10 && gPercent < 10 && bPercent < 10) {
+    lcd.print("Noir ");
+  } else if (rPercent > 90 && gPercent > 90 && bPercent > 90) {
+    lcd.print("Blanc ");
+  } else {
+    lcd.print("Inconnu");
+  }
+
+  delay(1000);
+}
+
+int readColor(int s2State, int s3State) {
+  digitalWrite(S2, s2State);
+  digitalWrite(S3, s3State);
+  return pulseIn(OUT, LOW);
+}
